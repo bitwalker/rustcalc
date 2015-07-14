@@ -1,0 +1,5 @@
+[package]
+
+name = "rustcalc"
+version = "0.0.1"
+authors = [ "Paul Schoenfelder <paulschoenfelder@gmail.com" ]
