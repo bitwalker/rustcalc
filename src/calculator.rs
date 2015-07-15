@@ -9,7 +9,14 @@ pub fn evaluate(expr: &Expr) -> i64 {
         &Plus(box ref l, box ref r)  => evaluate(&l) + evaluate(&r),
         &Minus(box ref l, box ref r) => evaluate(&l) - evaluate(&r),
         &Mul(box ref l, box ref r)   => evaluate(&l) * evaluate(&r),
-        &Div(box ref l, box ref r)   => evaluate(&l) / evaluate(&r),
-        &Pow(box ref l, box ref r)   => evaluate(&l).pow(evaluate(&r) as u32)
+        &Pow(box ref l, box ref r)   => evaluate(&l).pow(evaluate(&r) as u32),
+        &Div(box ref l, box ref r)   => {
+            let numerator = evaluate(&l);
+            let divisor   = evaluate(&r);
+            match divisor {
+                n if n == 0 => 0i64,
+                _           => numerator / divisor
+            }
+        }
     }
 }
