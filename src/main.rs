@@ -24,8 +24,11 @@ fn main() {
             ""      => continue,
             "exit"  => break,
             trimmed => {
-                let result = rustcalc::parse(trimmed);
-                println!("Result: {} == {}", result, "N/A")
+                let num = rustcalc::calc(trimmed);
+                match num {
+                    Ok(x)    => println!("Result: {} == {}", trimmed, x),
+                    Err(err) => println!("Invalid expression: {}", err)
+                }
             }
         }
     }
