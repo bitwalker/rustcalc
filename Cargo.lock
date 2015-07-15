@@ -1,4 +1,12 @@
 [root]
 name = "rustcalc"
 version = "0.0.1"
+dependencies = [
+ "parser-combinators 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "parser-combinators"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 
