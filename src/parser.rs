@@ -10,7 +10,7 @@ pub fn parse(input: &str) -> Result<(Expr, &str), ParseError<char>> {
 // The type which defines our expression primitives (numbers and operators basically)
 #[derive(Debug, PartialEq)]
 pub enum Expr {
-    Int(i64),
+    Number(f64),
     Plus(Box<Expr>, Box<Expr>),
     Minus(Box<Expr>, Box<Expr>),
     Mul(Box<Expr>, Box<Expr>),
@@ -23,7 +23,7 @@ pub enum Expr {
 impl fmt::Display for Expr {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Expr::Int(ref i)          => write!(f, "{}", i),
+            Expr::Number(ref i)       => write!(f, "{}", i),
             Expr::Plus(ref l, ref r)  => write!(f, "{} + {}", l, r),
             Expr::Minus(ref l, ref r) => write!(f, "{} - {}", l, r),
             Expr::Mul(ref l, ref r)   => write!(f, "{} * {}", l, r),
@@ -34,21 +34,41 @@ impl fmt::Display for Expr {
 }
 
 // Parser which extracts a signed integer value from the input string
-fn integer<'a, I>(input: State<I>) -> ParseResult<i64, I>
+fn number<'a, I>(input: State<I>) -> ParseResult<f64, I>
     where I: Stream<Item=char> {
-    let ((negation, s), input) = try!(optional(char('-'))
+    let (((negation, whole), fractional), input) = try!(optional(char('-'))
                             .and(many1::<String, _>(digit()))
-                            .expected("integer")
+                            .and(optional(char('.').and(many1::<String, _>(digit()))))
+                            .expected("number")
                             .parse_state(input));
+
+    // Build whole number
     let mut n = 0;
-    for c in s.chars() {
+    for c in whole.chars() {
         n = n * 10 + (c as i64 - '0' as i64)
     }
-    n = match negation {
-        Some(_) => n * -1,
-        None    => n
+    // Build fractional part
+    let mut m = 0;
+    let mut precision = 0;
+    match fractional {
+        Some((_, f)) => {
+            for c in f.chars() {
+                precision = precision + 1u32;
+                m = m * 10 + (c as i64 - '0' as i64);
+            }
+        }
+        None => ()
+    }
+    // Add fractional part to whole if present
+    let mut number = n as f64;
+    if precision > 0 {
+        number = number + (m as f64 / (10i64.pow(precision) as f64));
+    }
+    number = match negation {
+        Some(_) => number * -1f64,
+        None    => number
     };
-    Ok((n, input))
+    Ok((number, input))
 }
 
 // Parser which extracts an expression from the input string, where an expression
@@ -56,11 +76,11 @@ fn integer<'a, I>(input: State<I>) -> ParseResult<i64, I>
 #[allow(unconditional_recursion)]
 fn expr(input: State<&str>) -> ParseResult<Expr, &str> {
     let spaces     = spaces();
-    let integer    = parser(integer);
+    let number     = parser(number);
     let paren_expr = between(char('('), char(')'), parser(term)).expected("(");
 
     spaces.clone()
-          .with(integer.map(Expr::Int).or(paren_expr))
+          .with(number.map(Expr::Number).or(paren_expr))
           .skip(spaces)
           .parse_state(input)
 }

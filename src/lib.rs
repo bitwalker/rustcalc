@@ -9,7 +9,7 @@ use parser_combinators::ParseError;
 mod parser;
 mod calculator;
 
-pub fn calc(input: &str) -> Result<i64, ParseError<char>> {
+pub fn calc(input: &str) -> Result<f64, ParseError<char>> {
     // Parses the input string to an expression tree
     let result: Result<(parser::Expr, &str), ParseError<char>> = parser::parse(input);
     match result {
