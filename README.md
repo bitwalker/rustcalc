@@ -3,10 +3,8 @@
 A tiny command line calculator built in Rust for a code challenge.
 
 It supports `+`, `-`, `/`, `*`, and `^` operators, as well as the
-usage of `-` as negation. It does not currently work on floating
-point numbers, and division results in truncated integer values, so
-there is an improvement to be made there once I sort out how I want to
-handle that in the parser.
+usage of `-` as negation. You can provide integers or floating point
+numbers of arbitrary precision.
 
 ## Usage (from binary)
 
