@@ -3,8 +3,20 @@
 A tiny command line calculator built in Rust for a code challenge.
 
 It supports `+`, `-`, `/`, `*`, and `^` operators, as well as the
-usage of `-` as negation. You can provide integers or floating point
-numbers of arbitrary precision.
+usage of `-` as negation. Grouping with `()` is also allowed. Numbers
+can either be integers or arbitrary-precision floats.
+
+## Example
+
+```bash
+$ ./bin/rustcalc
+Welcome to rustcalc!
+To quit, just type `exit` and press ENTER.
+Type an expression and press ENTER to evaluate: 3.5+(2-1)*(10^2)/2
+Result: 3.5+(2-1)*(10^2)/2 == 53.5
+Type an expression and press ENTER to evaluate: exit
+$
+```
 
 ## Usage (from binary)
 
