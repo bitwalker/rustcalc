@@ -33,7 +33,7 @@ impl fmt::Display for Expr {
     }
 }
 
-// Parser which extracts a signed integer value from the input string
+// Parser which extracts a signed integer or floating point value from the input string
 fn number<'a, I>(input: State<I>) -> ParseResult<f64, I>
     where I: Stream<Item=char> {
     let (((negation, whole), fractional), input) = try!(optional(char('-'))
